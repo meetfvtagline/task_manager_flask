@@ -34,7 +34,7 @@ def register():
         
         new_user = User(
             username=username,
-            email=email,
+            email=email,    
             password=generate_password_hash(password)
         )
 
