@@ -1,10 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
+
 <h3>Dashboard</h3>
 
-<form method="POST" action="{{ url_for('task.add_task') }}" class="task-form">
-    <input type="text" name="title" placeholder="Task title" required>
+<div class="counts">
+    <strong>Pending:</strong> {{ counts.pending }} |
+    <strong>In Progress:</strong> {{ counts.in_progress }} |
+    <strong>Completed:</strong> {{ counts.completed }}
+</div>
+
+<form id="addForm">
+    <input name="title" placeholder="Title" required>
     <textarea name="description" placeholder="Description" required></textarea>
     <button type="submit" class="btn">Add Task</button>
 </form>
@@ -12,69 +18,66 @@
 <hr>
 
 <div class="task-sections">
+{% for status, label in [('pending','Pending'),('in-progress','In Progress'),('completed','Completed')] %}
+<div class="task-column">
+<h3>{{ label }}</h3>
 
-    <!-- Pending -->
-    <div class="task-column">
-        <h3>Pending</h3>
-        {% for task in tasks if task.status == 'pending' %}
-        <div class="task">
-            <strong>{{ task.title }}</strong>
-            <p>{{ task.description }}</p>
+{% for task in tasks if task.status == status %}
+<div class="task" data-id="{{ task.id }}">
 
-            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
-                <select name="status" onchange="this.form.submit()">
-                    <option value="pending" selected>Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </form>
+    <input class="title" value="{{ task.title }}">
+    <textarea class="desc">{{ task.description }}</textarea>
 
-            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
-        </div>
-        {% endfor %}
-    </div>
+    <!-- AUTO SAVE ON CHANGE -->
+    <select class="status" onchange="saveTask({{ task.id }})">
+        <option value="pending" {% if task.status=='pending' %}selected{% endif %}>Pending</option>
+        <option value="in-progress" {% if task.status=='in-progress' %}selected{% endif %}>In Progress</option>
+        <option value="completed" {% if task.status=='completed' %}selected{% endif %}>Completed</option>
+    </select>
 
-    <!-- In Progress -->
-    <div class="task-column">
-        <h3>In Progress</h3>
-        {% for task in tasks if task.status == 'in-progress' %}
-        <div class="task">
-            <strong>{{ task.title }}</strong>
-            <p>{{ task.description }}</p>
-
-            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
-                <select name="status" onchange="this.form.submit()">
-                    <option value="pending">Pending</option>
-                    <option value="in-progress" selected>In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </form>
-
-            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Completed -->
-    <div class="task-column">
-        <h3>Completed</h3>
-        {% for task in tasks if task.status == 'completed' %}
-        <div class="task">
-            <strong>{{ task.title }}</strong>
-            <p>{{ task.description }}</p>
-
-            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
-                <select name="status" onchange="this.form.submit()">
-                    <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed" selected>Completed</option>
-                </select>
-            </form>
-
-            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
-        </div>
-        {% endfor %}
+    <div style="margin-top:6px">
+        <button type="button" class="btn" onclick="saveTask({{ task.id }})">Save</button>
+        <button type="button" class="btn" onclick="deleteTask({{ task.id }})">Delete</button>
     </div>
 
 </div>
+{% endfor %}
+</div>
+{% endfor %}
+</div>
+
+<script>
+document.getElementById("addForm").onsubmit = async e => {
+    e.preventDefault();
+    await fetch("/tasks/add", {
+        method:"POST",
+        body:new FormData(e.target)
+    });
+    location.reload();
+};
+
+async function saveTask(id){
+    const box = document.querySelector(`[data-id='${id}']`);
+    if(!box) return;
+
+    const fd = new FormData();
+    fd.append("title", box.querySelector(".title").value);
+    fd.append("description", box.querySelector(".desc").value);
+    fd.append("status", box.querySelector(".status").value);
+
+    const res = await fetch(`/tasks/update/${id}`, {
+        method:"POST",
+        body:fd
+    });
+
+    if(res.ok) location.reload();
+}
+
+async function deleteTask(id){
+    if(!confirm("Delete task?")) return;
+    await fetch(`/tasks/delete/${id}`, { method:"POST" });
+    location.reload();
+}
+</script>
+
 {% endblock %}
