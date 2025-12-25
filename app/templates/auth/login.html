@@ -1,58 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-        }
-        .container {
-            width: 350px;
-            margin: 80px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background: #2196F3;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 
-<div class="container">
-    <h2>Login</h2>
+<div class="auth-container">
+    <div class="card">
+        <h2 class="text-center mb-4">Login</h2>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <p style="color:red;">{{ messages[0] }}</p>
-      {% endif %}
-    {% endwith %}
+        <form method="POST">
+            <div class="mb-4">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter your username" required>
+            </div>
 
-    <form method="POST">
-        <input type="text" name="username" placeholder="Enter username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <a href="/auth/register">If You are new please register first</a>
+            <div class="mb-4">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+
+        <div class="text-center mt-4" style="font-size: 0.9rem;">
+            <span style="color: var(--text-muted)">New here?</span>
+            <a href="{{ url_for('auth.register') }}">Create an account</a>
+        </div>
+    </div>
 </div>
 
-</body>
-</html>
+{% endblock %}

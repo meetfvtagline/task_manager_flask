@@ -1,55 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
-    <style>
-        body { font-family: Arial; background:#f4f4f4; margin:0 }
-
-        .navbar {
-            background:#4CAF50;
-            color:white;
-            padding:10px 20px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
-
-        .btn {
-            background:#333;
-            color:white;
-            padding:6px 12px;
-            border:none;
-            border-radius:4px;
-            cursor:pointer;
-        }
-
-        .content { padding:20px }
-
-        .task-sections { display:flex; gap:20px; flex-wrap:wrap }
-        .task-column { background:white; padding:15px; border-radius:6px; width:30%; min-width:280px }
-        .task { background:#f9f9f9; padding:10px; margin-bottom:10px; border:1px solid #ddd }
-    </style>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
-<div class="navbar">
-    <h3>Task Manager</h3>
-    {% if session.get("username") %}
-        <span>{{ session.username }}</span>
-        <a href="{{ url_for('auth.logout') }}" class="btn">Logout</a>
-    {% endif %}
-</div>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="/" class="brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                    </path>
+                </svg>
+                TaskManager
+            </a>
 
-<div class="content">
-    {% with messages = get_flashed_messages() %}
-      {% for msg in messages %}
-        <p style="color:green">{{ msg }}</p>
-      {% endfor %}
-    {% endwith %}
+            <div class="nav-user">
+                {% if session.get("username") %}
+                <span class="user-name">Hi, {{ session.username }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">Logout</a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
-    {% block content %}{% endblock %}
-</div>
+    <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for msg in messages %}
+            <div class="flash-msg">{{ msg }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
 
 </body>
+
 </html>
