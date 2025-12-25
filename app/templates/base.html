@@ -5,58 +5,97 @@
     <title>Task Manager</title>
     <style>
         body {
-            height: 100vh;
+            margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #4CAF50, #2e8b57);
+            background: #f4f4f4;
+        }
+
+        .navbar {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .box {
-            background: white;
-            padding: 40px;
-            width: 350px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .navbar h2 {
+            margin: 0;
         }
 
-        h1 {
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-right span {
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            background: #333;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        /* Task styles (allowed here) */
+        .task-sections {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .task-column {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            width: 32%;
+            min-width: 280px;
+        }
+
+        .task {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
             margin-bottom: 10px;
         }
 
-        p {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        a {
-            display: block;
-            padding: 12px;
-            margin: 10px 0;
-            text-decoration: none;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .login {
-            background: #2196F3;
-        }
-
-        .register {
-            background: #4CAF50;
-        }
+        .edit-btn { background: #2196F3; }
+        .delete-btn { background: #f44336; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h1>Task Manager</h1>
-    <p>Please login or register</p>
+<div class="navbar">
+    <h2>Task Manager</h2>
 
-    <a href="{{ url_for('auth.login') }}" class="login">Login</a>
-    <a href="{{ url_for('auth.register') }}" class="register">Register</a>
+    <div class="nav-right">
+        {% if session.get('username') %}
+            <span>Welcome, <strong>{{ session['username'] }}</strong></span>
+            <a href="{{ url_for('auth.logout') }}" class="btn">Logout</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn">Register</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
 </div>
 
 </body>

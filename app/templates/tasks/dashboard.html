@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Dashboard</h3>
+
+<form method="POST" action="{{ url_for('task.add_task') }}" class="task-form">
+    <input type="text" name="title" placeholder="Task title" required>
+    <textarea name="description" placeholder="Description" required></textarea>
+    <button type="submit" class="btn">Add Task</button>
+</form>
+
+<hr>
+
+<div class="task-sections">
+
+    <!-- Pending -->
+    <div class="task-column">
+        <h3>Pending</h3>
+        {% for task in tasks if task.status == 'pending' %}
+        <div class="task">
+            <strong>{{ task.title }}</strong>
+            <p>{{ task.description }}</p>
+
+            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
+                <select name="status" onchange="this.form.submit()">
+                    <option value="pending" selected>Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </form>
+
+            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- In Progress -->
+    <div class="task-column">
+        <h3>In Progress</h3>
+        {% for task in tasks if task.status == 'in-progress' %}
+        <div class="task">
+            <strong>{{ task.title }}</strong>
+            <p>{{ task.description }}</p>
+
+            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
+                <select name="status" onchange="this.form.submit()">
+                    <option value="pending">Pending</option>
+                    <option value="in-progress" selected>In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </form>
+
+            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Completed -->
+    <div class="task-column">
+        <h3>Completed</h3>
+        {% for task in tasks if task.status == 'completed' %}
+        <div class="task">
+            <strong>{{ task.title }}</strong>
+            <p>{{ task.description }}</p>
+
+            <form method="POST" action="{{ url_for('task.update_task', id=task.id) }}">
+                <select name="status" onchange="this.form.submit()">
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed" selected>Completed</option>
+                </select>
+            </form>
+
+            <a href="{{ url_for('task.delete_task', id=task.id) }}" class="btn delete-btn">Delete</a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
