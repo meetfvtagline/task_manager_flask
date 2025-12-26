@@ -9,7 +9,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "user_id" not in session:
+        if "username" not in session:
             return redirect(url_for("auth.login"))
         return f(*args, **kwargs)
     return decorated
@@ -49,7 +49,9 @@ def register():
 
     return render_template("auth/register.html")
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout",methods=["POST"])
 def logout():
     session.clear()
-    return redirect(url_for("auth.login"))
+    response=redirect(url_for("auth.login"))
+    response.delete_cookie("session")
+    return response

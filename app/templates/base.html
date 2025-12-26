@@ -30,7 +30,9 @@
             <div class="nav-user">
                 {% if session.get("username") %}
                 <span class="user-name">Hi, {{ session.username }}</span>
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">Logout</a>
+                <form action="{{ url_for('auth.logout') }}" method="post">
+                    <button type="submit" class="btn btn-outline">Logout</button>
+                </form>
                 {% else %}
                 <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Login</a>
                 {% endif %}
@@ -52,6 +54,13 @@
         {% block content %}{% endblock %}
     </div>
 
+    <script>
+        window.onpageshow = function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 
 </html>
