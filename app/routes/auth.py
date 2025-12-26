@@ -52,6 +52,6 @@ def register():
 @auth_bp.route("/logout",methods=["POST"])
 def logout():
     session.clear()
-    response=redirect(url_for("auth.login"))
+    response=redirect(url_for("home.home"))
     response.delete_cookie("session")
     return response
